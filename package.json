@@ -1,0 +1,17 @@
+{
+  "name": "sigma-lab",
+  "version": "1.0.0",
+  "description": "Detection-as-code lab for Sigma rules: a zero-dependency YAML subset parser and rule engine, precision and recall against labelled events, lint warnings and MITRE ATT&CK coverage against your own threat profile. Runs in the browser and in CI.",
+  "license": "MIT",
+  "type": "module",
+  "bin": { "sigma-lab": "dist/src/cli.js" },
+  "scripts": {
+    "build": "tsc",
+    "start": "tsc && node dist/src/server-main.js",
+    "test": "tsc && node --test dist/test/*.test.js"
+  },
+  "repository": "github:jvch0512/sigma-lab",
+  "keywords": ["sigma", "detection-engineering", "mitre-attack", "soc", "detection-as-code", "blue-team", "yaml", "siem", "typescript"],
+  "devDependencies": { "@types/node": "^22.0.0", "typescript": "^5.6.0" },
+  "engines": { "node": ">=20" }
+}

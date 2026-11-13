@@ -1,0 +1,257 @@
+title: Encoded PowerShell command line
+id: ps-encoded
+status: stable
+description: PowerShell started with an encoded command, a common way to hide a payload from simple string matching.
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection_img:
+    Image|endswith: '\powershell.exe'
+  selection_cli:
+    CommandLine|contains|windash:
+      - ' -enc '
+      - ' -encodedcommand '
+  condition: all of selection_*
+falsepositives:
+  - Management tools that wrap scripts in encoded commands
+level: high
+tags:
+  - attack.execution
+  - attack.t1059.001
+---
+title: LSASS memory dump via procdump or comsvcs
+id: lsass-dump
+status: stable
+description: A process dumps the memory of lsass.exe, which holds credentials.
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection_tool:
+    - Image|endswith:
+        - '\procdump.exe'
+        - '\procdump64.exe'
+    - CommandLine|contains|all:
+        - 'comsvcs.dll'
+        - 'MiniDump'
+  selection_target:
+    CommandLine|contains: 'lsass'
+  condition: selection_tool and selection_target
+falsepositives:
+  - Authorised crash analysis
+level: critical
+tags:
+  - attack.credential-access
+  - attack.t1003.001
+---
+title: Shadow copies deleted or recovery disabled
+id: inhibit-recovery
+status: stable
+description: Commands that delete volume shadow copies or disable recovery, typical before ransomware encryption.
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  vss:
+    CommandLine|contains|all:
+      - 'vssadmin'
+      - 'delete'
+      - 'shadows'
+  wmic:
+    CommandLine|contains|all:
+      - 'shadowcopy'
+      - 'delete'
+  bcd:
+    CommandLine|contains|all:
+      - 'bcdedit'
+      - 'recoveryenabled'
+      - 'no'
+  condition: 1 of them
+falsepositives:
+  - Backup software maintenance
+level: critical
+tags:
+  - attack.impact
+  - attack.t1490
+---
+title: Windows event log cleared
+id: log-cleared
+status: stable
+description: The Security or System log was cleared, or wevtutil was used to clear one.
+logsource:
+  product: windows
+  service: security
+detection:
+  event:
+    EventID:
+      - 1102
+      - 104
+  tool:
+    Image|endswith: '\wevtutil.exe'
+    CommandLine|contains:
+      - ' cl '
+      - 'clear-log'
+  condition: event or tool
+falsepositives:
+  - Planned log maintenance
+level: high
+tags:
+  - attack.defense-evasion
+  - attack.t1070.001
+---
+title: Scheduled task created from the command line
+id: schtask-create
+status: test
+description: schtasks.exe creates a task, a common persistence and execution mechanism.
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    Image|endswith: '\schtasks.exe'
+    CommandLine|contains: '/create'
+  condition: selection
+falsepositives:
+  - Software updaters and installers
+level: medium
+tags:
+  - attack.persistence
+  - attack.t1053.005
+---
+title: RDP logon from an external address
+id: rdp-external
+status: test
+description: Interactive remote logon (type 10) from an address outside the private ranges.
+logsource:
+  product: windows
+  service: security
+detection:
+  logon:
+    EventID: 4624
+    LogonType: 10
+  internal:
+    IpAddress|startswith:
+      - '10.'
+      - '192.168.'
+      - '172.16.'
+      - '127.'
+  condition: logon and not internal
+falsepositives:
+  - Admins connecting through a public jump host
+level: high
+tags:
+  - attack.lateral-movement
+  - attack.t1021.001
+---
+title: Local user account created
+id: user-created
+status: stable
+description: A local account was created, which can be a persistence step.
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4720
+  condition: selection
+falsepositives:
+  - Helpdesk onboarding of local accounts
+level: medium
+tags:
+  - attack.persistence
+  - attack.t1136.001
+---
+title: Rundll32 running a script or a remote resource
+id: rundll32-script
+status: test
+description: rundll32.exe launched with a javascript or remote URL argument, used to proxy execution.
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    Image|endswith: '\rundll32.exe'
+    CommandLine|contains:
+      - 'javascript:'
+      - 'http://'
+      - 'https://'
+  condition: selection
+falsepositives:
+  - Rare internal tooling
+level: high
+tags:
+  - attack.defense-evasion
+  - attack.t1218.011
+---
+title: Defender real-time protection disabled
+id: defender-off
+status: stable
+description: PowerShell turns off Microsoft Defender real-time monitoring.
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    CommandLine|contains|all:
+      - 'Set-MpPreference'
+      - 'DisableRealtimeMonitoring'
+      - '$true'
+  condition: selection
+falsepositives:
+  - Lab machines
+level: high
+tags:
+  - attack.defense-evasion
+  - attack.t1562.001
+---
+title: Certutil used to download a file
+id: certutil-download
+status: stable
+description: certutil.exe fetches a remote file with -urlcache, a living-off-the-land download.
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    Image|endswith: '\certutil.exe'
+    CommandLine|contains|all:
+      - 'urlcache'
+      - 'http'
+  condition: selection
+falsepositives:
+  - Certificate retrieval by admins
+level: high
+tags:
+  - attack.command-and-control
+  - attack.t1105
+---
+title: Kerberos service ticket requested with RC4
+id: kerberoast
+status: test
+description: A service ticket with RC4 encryption was requested for a non-machine account, the pattern of Kerberoasting.
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4769
+    TicketEncryptionType: '0x17'
+  machine:
+    ServiceName|endswith: '$'
+  condition: selection and not machine
+falsepositives:
+  - Legacy applications that only support RC4
+level: high
+tags:
+  - attack.credential-access
+  - attack.t1558.003
+---
+title: Suspicious cmd
+id: cmd-loose
+status: experimental
+detection:
+  selection:
+    CommandLine|contains: 'cmd'
+  condition: selection
+level: low

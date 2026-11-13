@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<title>sigma-lab</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div>
+    <h1>sigma-lab</h1>
+    <p class="sub">Detection-as-code lab. Paste Sigma rules and labelled events, see precision and recall per rule, lint warnings and MITRE ATT&amp;CK coverage against your own threat profile. Runs in this tab, nothing is uploaded.</p>
+  </div>
+  <button type="button" id="sample">Load sample</button>
+</header>
+<main>
+  <div class="panel">
+    <h2>Sigma rules (YAML, several separated by ---)</h2>
+    <textarea id="rules" rows="12" spellcheck="false"></textarea>
+    <h2>Events (JSON Lines, optional "_expect": ["rule-id"] labels)</h2>
+    <textarea id="events" rows="7" spellcheck="false"></textarea>
+    <h2>Threat profile (ATT&amp;CK technique IDs, optional)</h2>
+    <textarea id="target" rows="4" spellcheck="false"></textarea>
+    <p class="hint">Supported: field modifiers contains, startswith, endswith, all, re, windash, exists, lt/gt, wildcards, keyword lists, and/or/not, parentheses, "1 of" and "all of". Aggregations (count, near) are not supported and are reported.</p>
+  </div>
+  <div id="out"></div>
+</main>
+<script type="module" src="app.js"></script>
+</body>
+</html>

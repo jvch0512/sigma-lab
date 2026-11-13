@@ -1,0 +1,15 @@
+# Techniques that matter for a ransomware crew targeting a fintech (example profile)
+T1566.001   # phishing attachment
+T1059.001   # PowerShell
+T1003.001   # LSASS dumping
+T1021.001   # RDP
+T1021.002   # SMB admin shares
+T1053.005   # scheduled task
+T1490       # inhibit recovery
+T1486       # encryption for impact
+T1562.001   # disable security tools
+T1070.001   # clear logs
+T1105       # ingress tool transfer
+T1558.003   # kerberoasting
+T1047       # WMI
+T1218       # proxy execution
